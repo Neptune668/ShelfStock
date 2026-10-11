@@ -1,0 +1,13 @@
+package com.atguigu.cake.service;
+
+import com.atguigu.cake.entity.MaterialInbound;
+import com.baomidou.mybatisplus.extension.service.IService;
+
+/**
+* @author YuanYi
+* @description 针对表【material_inbound(原材料入库流水)】的数据库操作Service
+* @createDate 2026-10-11 15:49:23
+*/
+public interface MaterialInboundService extends IService<MaterialInbound> {
+
+}
