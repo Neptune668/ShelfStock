@@ -14,6 +14,7 @@ public enum ResultCode {
     BAD_REQUEST(400, "参数错误"),
     UNAUTHORIZED(401, "未登录或登录已过期"),
     FORBIDDEN(403, "无权限访问"),
+    NOT_FOUND(404, "资源不存在"),
     SYSTEM_ERROR(500, "系统异常"),
 
     STOCK_NOT_ENOUGH(1001, "库存不足"),
