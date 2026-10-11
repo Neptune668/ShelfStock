@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import dayjs from 'dayjs'
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
+import type { FormInstance, FormRules } from 'element-plus'
 import { offShelf, onShelf, pageProduct, pageProductBatch, sale } from '@/api/product'
+import { formatNumber } from '@/utils/format'
 import {
   SALE_TYPE_TEXT,
   SHELF_STATUS_TAG,
@@ -194,7 +195,9 @@ onMounted(() => {
     <el-table v-loading="loading" :data="list" border>
       <el-table-column prop="id" label="批次" width="80" />
       <el-table-column prop="productName" label="成品" />
-      <el-table-column prop="price" label="售价(元)" width="100" />
+      <el-table-column prop="price" label="售价(元)" width="100">
+        <template #default="{ row }">{{ formatNumber(row.price) }}</template>
+      </el-table-column>
       <el-table-column prop="quantity" label="剩余数量" width="100" />
       <el-table-column prop="productionDate" label="生产日期" width="120" />
       <el-table-column prop="expiryDate" label="过期日期" width="120" />
@@ -208,8 +211,8 @@ onMounted(() => {
       </el-table-column>
       <el-table-column label="操作" width="140">
         <template #default="{ row }">
-          <el-button link type="primary" @click="openSale(row)">销售</el-button>
-          <el-button link type="warning" @click="openOff(row)">下架</el-button>
+          <el-button link type="primary" @click="openSale(row as ProductBatchVO)">销售</el-button>
+          <el-button link type="warning" @click="openOff(row as ProductBatchVO)">下架</el-button>
         </template>
       </el-table-column>
     </el-table>

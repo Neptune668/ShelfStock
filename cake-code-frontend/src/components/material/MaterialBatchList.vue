@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import dayjs from 'dayjs'
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
+import type { FormInstance, FormRules } from 'element-plus'
 import { inbound, outbound, pageMaterial, pageMaterialBatch } from '@/api/material'
 import {
   MATERIAL_STATUS_TAG,
@@ -172,7 +172,7 @@ onMounted(() => {
       </el-table-column>
       <el-table-column label="操作" width="100">
         <template #default="{ row }">
-          <el-button link type="primary" @click="openOutbound(row)">出库</el-button>
+          <el-button link type="primary" @click="openOutbound(row as MaterialBatchVO)">出库</el-button>
         </template>
       </el-table-column>
     </el-table>

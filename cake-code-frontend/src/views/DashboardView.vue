@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import type { EChartsOption } from 'echarts'
-import { ElMessage } from 'element-plus'
 import { getExpiryDistribution, getOutboundReason, getOverview, getSaleTrend } from '@/api/dashboard'
 import { pageOutbound } from '@/api/material'
 import { pageSale } from '@/api/product'
 import BaseChart from '@/components/dashboard/BaseChart.vue'
 import { exportCsv } from '@/utils/export'
+import { formatNumber } from '@/utils/format'
 import {
   OUTBOUND_REASON_TEXT,
   SALE_TYPE_TEXT,
@@ -87,19 +87,20 @@ interface KpiItem {
   title: string
   value: number
   color: string
+  isDecimal?: boolean
 }
 
 const kpiItems = computed<KpiItem[]>(() => {
   const o = overview.value
   if (!o) return []
   return [
-    { title: '原材料总库存', value: o.materialTotalQuantity, color: '#409eff' },
+    { title: '原材料总库存', value: o.materialTotalQuantity, color: '#409eff', isDecimal: true },
     { title: '原材料种类', value: o.materialTypeCount, color: '#409eff' },
-    { title: '在售成品数量', value: o.onSaleQuantity, color: '#67c23a' },
+    { title: '在售成品数量', value: o.onSaleQuantity, color: '#67c23a', isDecimal: true },
     { title: '成品种类', value: o.productTypeCount, color: '#67c23a' },
-    { title: '今日销售金额(元)', value: o.todaySaleAmount, color: '#e6a23c' },
+    { title: '今日销售金额(元)', value: o.todaySaleAmount, color: '#e6a23c', isDecimal: true },
     { title: '今日销售笔数', value: o.todaySaleCount, color: '#e6a23c' },
-    { title: '今日入库/出库', value: o.todayInboundQuantity - o.todayOutboundQuantity, color: '#909399' },
+    { title: '今日入库/出库', value: o.todayInboundQuantity - o.todayOutboundQuantity, color: '#909399', isDecimal: true },
     { title: '临期/过期待处理', value: o.nearExpiryMaterialBatch + o.nearExpiryProduct + o.expiredPending, color: '#f56c6c' },
   ]
 })
@@ -251,7 +252,7 @@ onBeforeUnmount(() => stopAutoRefresh())
       <el-col v-for="item in kpiItems" :key="item.title" :xs="12" :sm="8" :md="6">
         <el-card class="kpi-card" shadow="hover">
           <div class="kpi-title">{{ item.title }}</div>
-          <div class="kpi-value" :style="{ color: item.color }">{{ item.value }}</div>
+          <div class="kpi-value" :style="{ color: item.color }">{{ item.isDecimal ? formatNumber(item.value) : item.value }}</div>
         </el-card>
       </el-col>
     </el-row>
@@ -303,8 +304,12 @@ onBeforeUnmount(() => stopAutoRefresh())
             <el-table-column label="销售类型" width="120">
               <template #default="{ row }">{{ SALE_TYPE_TEXT[row.saleType as SaleType] || row.saleType }}</template>
             </el-table-column>
-            <el-table-column prop="originalPrice" label="原价(元)" width="110" sortable />
-            <el-table-column prop="actualPrice" label="成交价(元)" width="110" sortable />
+            <el-table-column prop="originalPrice" label="原价(元)" width="110" sortable>
+              <template #default="{ row }">{{ formatNumber(row.originalPrice) }}</template>
+            </el-table-column>
+            <el-table-column prop="actualPrice" label="成交价(元)" width="110" sortable>
+              <template #default="{ row }">{{ formatNumber(row.actualPrice) }}</template>
+            </el-table-column>
             <el-table-column prop="createdAt" label="销售时间" sortable />
           </el-table>
           <el-pagination

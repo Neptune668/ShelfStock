@@ -1,5 +1,4 @@
 import axios, { type AxiosError } from 'axios'
-import { ElMessage } from 'element-plus'
 import type { Result } from './types'
 
 const http = axios.create({

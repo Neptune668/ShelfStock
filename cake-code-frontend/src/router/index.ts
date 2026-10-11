@@ -60,4 +60,10 @@ router.beforeEach((to) => {
   return true
 })
 
+// 动态设置页面标题
+router.afterEach((to) => {
+  const base = '小云烘焙店库存与货架管理系统'
+  document.title = to.meta.title ? `${to.meta.title} - ${base}` : base
+})
+
 export default router

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
-import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
+import type { FormInstance, FormRules } from 'element-plus'
 import { addMaterial, deleteMaterial, pageMaterial, updateMaterial } from '@/api/material'
 import type { MaterialDTO, MaterialVO } from '@/api/types'
 
@@ -118,8 +118,8 @@ onMounted(loadList)
       <el-table-column prop="storageCondition" label="存储条件" />
       <el-table-column label="操作" width="140">
         <template #default="{ row }">
-          <el-button link type="primary" @click="openEdit(row)">编辑</el-button>
-          <el-button link type="danger" @click="handleDelete(row)">删除</el-button>
+          <el-button link type="primary" @click="openEdit(row as MaterialVO)">编辑</el-button>
+          <el-button link type="danger" @click="handleDelete(row as MaterialVO)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
