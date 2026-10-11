@@ -10,5 +10,4 @@ public class CakeMainType {
     public static void main(String[] args) {
         SpringApplication.run(CakeMainType.class, args);
     }
-
 }
