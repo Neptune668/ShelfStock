@@ -1,7 +1,7 @@
 package com.atguigu.cake.service;
 
 import com.atguigu.cake.entity.Material;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 
 /**
 * @author YuanYi

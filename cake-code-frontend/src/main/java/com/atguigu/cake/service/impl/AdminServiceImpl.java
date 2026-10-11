@@ -1,6 +1,6 @@
 package com.atguigu.cake.service.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import com.atguigu.cake.entity.Admin;
 import com.atguigu.cake.service.AdminService;
 import com.atguigu.cake.mapper.AdminMapper;
