@@ -41,6 +41,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // 登录接口放行
                         .requestMatchers("/api/auth/login").permitAll()
+                        // 前端静态资源放行（打包进 resources/static）
+                        .requestMatchers("/", "/index.html", "/assets/**", "/favicon.svg").permitAll()
+                        // 前端 history 路由放行（刷新页面时直接访问这些路径）
+                        .requestMatchers("/login", "/material", "/product", "/dashboard").permitAll()
                         // knife4j / springdoc 文档页放行
                         .requestMatchers("/doc.html", "/webjars/**", "/v3/api-docs/**",
                                 "/swagger-ui/**", "/swagger-ui.html", "/favicon.ico").permitAll()
