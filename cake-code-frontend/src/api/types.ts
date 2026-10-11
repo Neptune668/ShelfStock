@@ -224,3 +224,46 @@ export const SALE_TYPE_TEXT: Record<SaleType, string> = {
   NORMAL_SALE: '正常销售',
   DISCOUNT_SALE: '临期降价',
 }
+
+// ==================== 数据看板 ====================
+
+/** 列表包装结构（无分页的列表返回） */
+export interface ListData<T> {
+  list: T[]
+}
+
+/** 看板总览 */
+export interface OverviewVO {
+  materialTotalQuantity: number
+  materialTypeCount: number
+  todayInboundQuantity: number
+  todayOutboundQuantity: number
+  onSaleQuantity: number
+  productTypeCount: number
+  todaySaleCount: number
+  todaySaleAmount: number
+  nearExpiryMaterialBatch: number
+  nearExpiryProduct: number
+  expiredPending: number
+}
+
+/** 销售趋势（按天） */
+export interface SaleTrendVO {
+  date: string
+  saleCount: number
+  saleAmount: number
+}
+
+/** 出库原因占比 */
+export interface OutboundReasonVO {
+  reason: string
+  reasonName: string
+  quantity: number
+}
+
+/** 临期分布 */
+export interface ExpiryDistributionVO {
+  type: string
+  typeName: string
+  count: number
+}
