@@ -212,8 +212,11 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product>
         LambdaQueryWrapper<SaleRecord> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(StringUtils.hasText(saleType), SaleRecord::getSaleType, saleType)
                 .ge(startDate != null, SaleRecord::getCreatedAt, startDate)
-                .lt(endDate != null, SaleRecord::getCreatedAt, DateUtil.addDays(endDate, 1))
                 .orderByDesc(SaleRecord::getId);
+        // endDate 为 null 时不能直接调用 addDays（会 NPE），需先判空
+        if (endDate != null) {
+            wrapper.lt(SaleRecord::getCreatedAt, DateUtil.addDays(endDate, 1));
+        }
         Page<SaleRecord> salePage = saleRecordMapper.selectPage(new Page<>(pageNum, pageSize), wrapper);
 
         Map<Long, Product> productMap = loadProductMap(

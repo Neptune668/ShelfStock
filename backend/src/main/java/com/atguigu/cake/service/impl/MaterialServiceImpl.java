@@ -193,8 +193,11 @@ public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
         LambdaQueryWrapper<MaterialOutbound> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(StringUtils.hasText(reason), MaterialOutbound::getReason, reason)
                 .ge(startDate != null, MaterialOutbound::getCreatedAt, startDate)
-                .lt(endDate != null, MaterialOutbound::getCreatedAt, DateUtil.addDays(endDate, 1))
                 .orderByDesc(MaterialOutbound::getId);
+        // endDate 为 null 时不能直接调用 addDays（会 NPE），需先判空
+        if (endDate != null) {
+            wrapper.lt(MaterialOutbound::getCreatedAt, DateUtil.addDays(endDate, 1));
+        }
         Page<MaterialOutbound> outboundPage = materialOutboundMapper.selectPage(new Page<>(pageNum, pageSize), wrapper);
 
         Map<Long, Material> materialMap = loadMaterialMap(
