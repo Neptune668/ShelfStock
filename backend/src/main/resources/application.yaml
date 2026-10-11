@@ -52,3 +52,5 @@ jwt:
   secret: cake-stock-jwt-secret-key-please-change-me-0123456789
   # Token 有效期（毫秒），24 小时
   expiration: 86400000
+  # 「记住我」时的 Token 有效期（毫秒），7 天
+  remember-expiration: 604800000

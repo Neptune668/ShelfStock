@@ -23,16 +23,30 @@ public class JwtUtil {
     @Value("${jwt.expiration}")
     private Long expiration;
 
+    @Value("${jwt.remember-expiration}")
+    private Long rememberExpiration;
+
     private SecretKey getKey() {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
-     * 生成 Token
+     * 生成 Token（默认有效期，24 小时）
      */
     public String generateToken(Long adminId, String username) {
+        return generateToken(adminId, username, expiration);
+    }
+
+    /**
+     * 生成「记住我」Token（更长有效期，如 7 天），用于免登录
+     */
+    public String generateTokenWithRemember(Long adminId, String username) {
+        return generateToken(adminId, username, rememberExpiration);
+    }
+
+    private String generateToken(Long adminId, String username, Long expireMillis) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + expiration);
+        Date expiryDate = new Date(now.getTime() + expireMillis);
         return Jwts.builder()
                 .subject(username)
                 .claim(CLAIM_ADMIN_ID, adminId)

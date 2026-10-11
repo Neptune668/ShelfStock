@@ -26,6 +26,12 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!-- 参数校验：@Validated + @NotBlank 等注解需要，Spring Boot 3 需单独引入 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
         <!-- MyBatis-Plus 整合 Spring Boot 3 的启动器（核心依赖） -->
         <dependency>
             <groupId>com.baomidou</groupId>
@@ -93,4 +99,12 @@
             <scope>runtime</scope>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>

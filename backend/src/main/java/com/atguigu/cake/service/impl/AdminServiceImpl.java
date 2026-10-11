@@ -39,7 +39,11 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin>
         if (admin == null || !passwordEncoder.matches(loginDTO.getPassword(), admin.getPassword())) {
             throw new BusinessException(ResultCode.UNAUTHORIZED.getCode(), "用户名或密码错误");
         }
-        String token = jwtUtil.generateToken(admin.getId(), admin.getUsername());
+        // 勾选「记住我」时签发更长有效期的 Token，实现一段时间内免登录
+        boolean rememberMe = Boolean.TRUE.equals(loginDTO.getRememberMe());
+        String token = rememberMe
+                ? jwtUtil.generateTokenWithRemember(admin.getId(), admin.getUsername())
+                : jwtUtil.generateToken(admin.getId(), admin.getUsername());
         LoginVO loginVO = new LoginVO();
         loginVO.setToken(token);
         loginVO.setAdminId(admin.getId());
