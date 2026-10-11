@@ -1,3 +1,37 @@
+/* ==================================================================
+ * 全局主题与设计令牌
+ * 说明：Element Plus 采用按需引入，其 base.css 会在组件懒加载时后注入，
+ * 若只用 :root 定义变量会被其默认蓝色主题覆盖，故用 html:root 提升优先级；
+ * 针对 .el-table / .el-card 这类组件内部变量，用双类名提升优先级。
+ * ================================================================== */
+
+html:root {
+  /* 品牌主色：暖焦糖琥珀色，贴合烘焙店氛围 */
+  --el-color-primary: #d97706;
+  --el-color-primary-rgb: 217, 119, 6;
+  --el-color-primary-light-3: #e4a051;
+  --el-color-primary-light-5: #ecbb83;
+  --el-color-primary-light-7: #f4d6b4;
+  --el-color-primary-light-8: #f7e4cd;
+  --el-color-primary-light-9: #fbf1e6;
+  --el-color-primary-dark-2: #ae5f05;
+
+  /* 圆角与字体 */
+  --el-border-radius-base: 8px;
+  --el-border-radius-small: 6px;
+  --el-font-family: system-ui, 'Segoe UI', Roboto, 'Microsoft YaHei', sans-serif;
+
+  /* 业务自定义令牌 */
+  --app-bg: #f7f4ef;
+  --app-radius: 14px;
+  --app-shadow: 0 1px 2px rgba(36, 26, 17, 0.04), 0 10px 28px -18px rgba(36, 26, 17, 0.24);
+  --app-sidebar-bg: linear-gradient(180deg, #2f2318 0%, #1e150e 100%);
+  --app-panel-bg: #faf7f2;
+  --app-border: rgba(36, 26, 17, 0.08);
+  --text-strong: #2b2320;
+  --text-muted: #8a8078;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -7,8 +41,92 @@ body {
   font-family: system-ui, 'Segoe UI', Roboto, 'Microsoft YaHei', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--app-bg);
+  color: var(--text-strong);
 }
 
 #app {
   min-height: 100vh;
+}
+
+/* ---------- 卡片 ---------- */
+.el-card.el-card {
+  border-radius: var(--app-radius);
+  border-color: var(--app-border);
+  box-shadow: var(--app-shadow);
+}
+
+/* ---------- 表格 ---------- */
+.el-table.el-table {
+  --el-table-border-color: rgba(36, 26, 17, 0.08);
+  --el-table-border: 1px solid rgba(36, 26, 17, 0.08);
+  --el-table-header-bg-color: #f6f1e9;
+  --el-table-header-text-color: #7a6f64;
+  --el-table-row-hover-bg-color: #fbf6ef;
+  --el-table-current-row-bg-color: #fbf6ef;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.el-table.el-table th.el-table__cell {
+  font-weight: 600;
+}
+
+.el-table.el-table th.el-table__cell,
+.el-table.el-table td.el-table__cell {
+  border-bottom: 1px solid rgba(36, 26, 17, 0.06);
+}
+
+/* ---------- 弹窗 ---------- */
+.el-dialog.el-dialog {
+  border-radius: 16px;
+}
+
+.el-dialog.el-dialog .el-dialog__header {
+  margin-right: 0;
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid var(--app-border);
+}
+
+.el-dialog.el-dialog .el-dialog__title {
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+.el-dialog.el-dialog .el-dialog__body {
+  padding: 20px 22px 6px;
+}
+
+.el-dialog.el-dialog .el-dialog__footer {
+  padding: 12px 22px 20px;
+}
+
+/* ---------- 分页 ---------- */
+.el-pagination.el-pagination {
+  --el-pagination-button-bg-color: #ffffff;
+}
+
+/* Element Plus 给输入框容器加了 flex-grow，
+ * 放在 flex 工具条里会把日期区间选择器拉宽，这里固定其自身宽度 */
+.el-date-editor.el-date-editor--daterange {
+  flex: none;
+}
+
+/* ---------- 滚动条 ---------- */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background-color: rgba(36, 26, 17, 0.18);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(36, 26, 17, 0.3);
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
 }

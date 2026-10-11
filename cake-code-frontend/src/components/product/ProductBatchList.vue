@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import dayjs from 'dayjs'
+import { Download, Search, Sell, Upload } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { offShelf, onShelf, pageProduct, pageProductBatch, sale } from '@/api/product'
 import { formatNumber } from '@/utils/format'
@@ -175,7 +176,7 @@ onMounted(() => {
 
 <template>
   <div>
-    <el-form inline @submit.prevent>
+    <el-form inline class="filter-bar" @submit.prevent>
       <el-form-item>
         <el-select v-model="query.productId" placeholder="成品" clearable style="width: 160px">
           <el-option v-for="item in productOptions" :key="item.id" :label="item.name" :value="item.id" />
@@ -186,13 +187,13 @@ onMounted(() => {
           <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="handleSearch">查询</el-button>
-        <el-button type="success" @click="openShelf">上架</el-button>
+      <el-form-item class="form-actions">
+        <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
+        <el-button type="success" :icon="Upload" @click="openShelf">上架</el-button>
       </el-form-item>
     </el-form>
 
-    <el-table v-loading="loading" :data="list" border>
+    <el-table v-loading="loading" :data="list" stripe>
       <el-table-column prop="id" label="批次" width="80" />
       <el-table-column prop="productName" label="成品" />
       <el-table-column prop="price" label="售价(元)" width="100">
@@ -204,15 +205,15 @@ onMounted(() => {
       <el-table-column prop="remainingDays" label="剩余天数" width="100" />
       <el-table-column label="状态" width="110">
         <template #default="{ row }">
-          <el-tag :type="SHELF_STATUS_TAG[row.status as ShelfStatus]">
+          <el-tag :type="SHELF_STATUS_TAG[row.status as ShelfStatus]" effect="light">
             {{ SHELF_STATUS_TEXT[row.status as ShelfStatus] }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="140">
+      <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
-          <el-button link type="primary" @click="openSale(row as ProductBatchVO)">销售</el-button>
-          <el-button link type="warning" @click="openOff(row as ProductBatchVO)">下架</el-button>
+          <el-button link type="primary" :icon="Sell" @click="openSale(row as ProductBatchVO)">销售</el-button>
+          <el-button link type="warning" :icon="Download" @click="openOff(row as ProductBatchVO)">下架</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -289,6 +290,26 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  background-color: var(--app-panel-bg);
+  border: 1px solid var(--app-border);
+}
+
+.filter-bar :deep(.el-form-item) {
+  margin: 0;
+}
+
+.filter-bar :deep(.form-actions) {
+  margin-left: auto;
+}
+
 .pagination {
   margin-top: 16px;
   justify-content: flex-end;

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
+import { Delete, Edit, Plus, Search } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { addProduct, deleteProduct, pageProduct, updateProduct } from '@/api/product'
 import { formatNumber } from '@/utils/format'
@@ -94,31 +95,33 @@ onMounted(loadList)
 
 <template>
   <div>
-    <el-form inline @submit.prevent>
+    <el-form inline class="filter-bar" @submit.prevent>
       <el-form-item>
         <el-input v-model="query.name" placeholder="名称" clearable style="width: 180px" @keyup.enter="handleSearch" />
       </el-form-item>
       <el-form-item>
         <el-input v-model="query.category" placeholder="分类" clearable style="width: 180px" @keyup.enter="handleSearch" />
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="handleSearch">查询</el-button>
-        <el-button type="success" @click="openAdd">新增</el-button>
+      <el-form-item class="form-actions">
+        <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
+        <el-button type="success" :icon="Plus" @click="openAdd">新增</el-button>
       </el-form-item>
     </el-form>
 
-    <el-table v-loading="loading" :data="list" border>
+    <el-table v-loading="loading" :data="list" stripe>
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="name" label="名称" />
       <el-table-column prop="category" label="分类" />
       <el-table-column prop="price" label="售价(元)" width="110">
-        <template #default="{ row }">{{ formatNumber(row.price) }}</template>
+        <template #default="{ row }">
+          <span class="price">{{ formatNumber(row.price) }}</span>
+        </template>
       </el-table-column>
       <el-table-column prop="shelfLifeDays" label="保质期(天)" width="110" />
-      <el-table-column label="操作" width="140">
+      <el-table-column label="操作" width="160" fixed="right">
         <template #default="{ row }">
-          <el-button link type="primary" @click="openEdit(row as ProductVO)">编辑</el-button>
-          <el-button link type="danger" @click="handleDelete(row as ProductVO)">删除</el-button>
+          <el-button link type="primary" :icon="Edit" @click="openEdit(row as ProductVO)">编辑</el-button>
+          <el-button link type="danger" :icon="Delete" @click="handleDelete(row as ProductVO)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -158,6 +161,31 @@ onMounted(loadList)
 </template>
 
 <style scoped>
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  background-color: var(--app-panel-bg);
+  border: 1px solid var(--app-border);
+}
+
+.filter-bar :deep(.el-form-item) {
+  margin: 0;
+}
+
+.filter-bar :deep(.form-actions) {
+  margin-left: auto;
+}
+
+.price {
+  font-weight: 600;
+  color: var(--el-color-primary);
+}
+
 .pagination {
   margin-top: 16px;
   justify-content: flex-end;

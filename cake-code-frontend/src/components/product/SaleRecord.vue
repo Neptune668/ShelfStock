@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
+import { Search } from '@element-plus/icons-vue'
 import { pageSale } from '@/api/product'
 import { SALE_TYPE_TEXT, type SaleRecordVO, type SaleType } from '@/api/types'
 
@@ -45,7 +46,7 @@ onMounted(loadList)
 
 <template>
   <div>
-    <el-form inline @submit.prevent>
+    <el-form inline class="filter-bar" @submit.prevent>
       <el-form-item>
         <el-select v-model="query.saleType" placeholder="销售类型" clearable style="width: 150px">
           <el-option v-for="item in saleTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
@@ -61,18 +62,20 @@ onMounted(loadList)
           style="width: 260px"
         />
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="handleSearch">查询</el-button>
+      <el-form-item class="form-actions">
+        <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
       </el-form-item>
     </el-form>
 
-    <el-table v-loading="loading" :data="list" border>
+    <el-table v-loading="loading" :data="list" stripe>
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="productName" label="成品" />
       <el-table-column prop="quantity" label="数量" width="100" />
       <el-table-column label="销售类型" width="120">
         <template #default="{ row }">
-          {{ SALE_TYPE_TEXT[row.saleType as SaleType] || row.saleType }}
+          <el-tag :type="row.saleType === 'DISCOUNT_SALE' ? 'warning' : 'success'" effect="light">
+            {{ SALE_TYPE_TEXT[row.saleType as SaleType] || row.saleType }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="originalPrice" label="原价(元)" width="110" />
@@ -94,6 +97,26 @@ onMounted(loadList)
 </template>
 
 <style scoped>
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  background-color: var(--app-panel-bg);
+  border: 1px solid var(--app-border);
+}
+
+.filter-bar :deep(.el-form-item) {
+  margin: 0;
+}
+
+.filter-bar :deep(.form-actions) {
+  margin-left: auto;
+}
+
 .pagination {
   margin-top: 16px;
   justify-content: flex-end;

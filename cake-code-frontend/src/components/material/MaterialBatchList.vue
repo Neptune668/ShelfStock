@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import dayjs from 'dayjs'
+import { Download, Search, Upload } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { inbound, outbound, pageMaterial, pageMaterialBatch } from '@/api/material'
 import {
@@ -141,7 +142,7 @@ onMounted(() => {
 
 <template>
   <div>
-    <el-form inline @submit.prevent>
+    <el-form inline class="filter-bar" @submit.prevent>
       <el-form-item>
         <el-input v-model="query.keyword" placeholder="原材料名称" clearable style="width: 180px" @keyup.enter="handleSearch" />
       </el-form-item>
@@ -150,13 +151,13 @@ onMounted(() => {
           <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="handleSearch">查询</el-button>
-        <el-button type="success" @click="openInbound">入库</el-button>
+      <el-form-item class="form-actions">
+        <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
+        <el-button type="success" :icon="Upload" @click="openInbound">入库</el-button>
       </el-form-item>
     </el-form>
 
-    <el-table v-loading="loading" :data="list" border>
+    <el-table v-loading="loading" :data="list" stripe>
       <el-table-column prop="id" label="批次" width="80" />
       <el-table-column prop="materialName" label="原材料" />
       <el-table-column prop="quantity" label="剩余数量" width="100" />
@@ -165,14 +166,14 @@ onMounted(() => {
       <el-table-column prop="remainingDays" label="剩余天数" width="100" />
       <el-table-column label="状态" width="100">
         <template #default="{ row }">
-          <el-tag :type="MATERIAL_STATUS_TAG[row.status as MaterialStatus]">
+          <el-tag :type="MATERIAL_STATUS_TAG[row.status as MaterialStatus]" effect="light">
             {{ MATERIAL_STATUS_TEXT[row.status as MaterialStatus] }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="100">
+      <el-table-column label="操作" width="120" fixed="right">
         <template #default="{ row }">
-          <el-button link type="primary" @click="openOutbound(row as MaterialBatchVO)">出库</el-button>
+          <el-button link type="primary" :icon="Download" @click="openOutbound(row as MaterialBatchVO)">出库</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -236,6 +237,26 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  background-color: var(--app-panel-bg);
+  border: 1px solid var(--app-border);
+}
+
+.filter-bar :deep(.el-form-item) {
+  margin: 0;
+}
+
+.filter-bar :deep(.form-actions) {
+  margin-left: auto;
+}
+
 .pagination {
   margin-top: 16px;
   justify-content: flex-end;

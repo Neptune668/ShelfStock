@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import type { Component } from 'vue'
 import type { EChartsOption } from 'echarts'
+import { Box, Collection, Download, Goods, Money, Refresh, Sort, TakeawayBox, Tickets, Warning } from '@element-plus/icons-vue'
 import { getExpiryDistribution, getOutboundReason, getOverview, getSaleTrend } from '@/api/dashboard'
 import { pageOutbound } from '@/api/material'
 import { pageSale } from '@/api/product'
@@ -86,7 +88,11 @@ watch(days, () => loadDashboard())
 interface KpiItem {
   title: string
   value: number
+  /** 数值与图标的主色 */
   color: string
+  /** 图标底色 */
+  tint: string
+  icon: Component
   isDecimal?: boolean
 }
 
@@ -94,55 +100,123 @@ const kpiItems = computed<KpiItem[]>(() => {
   const o = overview.value
   if (!o) return []
   return [
-    { title: '原材料总库存', value: o.materialTotalQuantity, color: '#409eff', isDecimal: true },
-    { title: '原材料种类', value: o.materialTypeCount, color: '#409eff' },
-    { title: '在售成品数量', value: o.onSaleQuantity, color: '#67c23a', isDecimal: true },
-    { title: '成品种类', value: o.productTypeCount, color: '#67c23a' },
-    { title: '今日销售金额(元)', value: o.todaySaleAmount, color: '#e6a23c', isDecimal: true },
-    { title: '今日销售笔数', value: o.todaySaleCount, color: '#e6a23c' },
-    { title: '今日入库/出库', value: o.todayInboundQuantity - o.todayOutboundQuantity, color: '#909399', isDecimal: true },
-    { title: '临期/过期待处理', value: o.nearExpiryMaterialBatch + o.nearExpiryProduct + o.expiredPending, color: '#f56c6c' },
+    {
+      title: '原材料总库存',
+      value: o.materialTotalQuantity,
+      color: '#d97706',
+      tint: '#fdf1e0',
+      icon: Box,
+      isDecimal: true,
+    },
+    { title: '原材料种类', value: o.materialTypeCount, color: '#2563eb', tint: '#e8f0fe', icon: Collection },
+    { title: '在售成品数量', value: o.onSaleQuantity, color: '#16a34a', tint: '#e7f7ee', icon: Goods, isDecimal: true },
+    { title: '成品种类', value: o.productTypeCount, color: '#7c3aed', tint: '#f1ebfe', icon: TakeawayBox },
+    {
+      title: '今日销售金额(元)',
+      value: o.todaySaleAmount,
+      color: '#e11d48',
+      tint: '#fdeaee',
+      icon: Money,
+      isDecimal: true,
+    },
+    { title: '今日销售笔数', value: o.todaySaleCount, color: '#0891b2', tint: '#e4f6fa', icon: Tickets },
+    {
+      title: '今日入库/出库',
+      value: o.todayInboundQuantity - o.todayOutboundQuantity,
+      color: '#64748b',
+      tint: '#eef1f5',
+      icon: Sort,
+      isDecimal: true,
+    },
+    {
+      title: '临期/过期待处理',
+      value: o.nearExpiryMaterialBatch + o.nearExpiryProduct + o.expiredPending,
+      color: '#ea580c',
+      tint: '#fdeee3',
+      icon: Warning,
+    },
   ]
 })
 
 // ==================== 图表 option ====================
 const trendOption = computed<EChartsOption>(() => ({
-  title: { text: '销售趋势', left: 'center' },
+  color: ['#d97706', '#2563eb'],
   tooltip: { trigger: 'axis' },
-  legend: { data: ['销售笔数', '销售金额'] },
-  grid: { left: 60, right: 60, bottom: 30, top: 60 },
-  xAxis: { type: 'category', data: trendList.value.map((item) => item.date) },
+  legend: { data: ['销售笔数', '销售金额'], left: 'center', top: 0, icon: 'circle' },
+  grid: { left: 10, right: 16, bottom: 6, top: 44, containLabel: true },
+  xAxis: {
+    type: 'category',
+    boundaryGap: false,
+    data: trendList.value.map((item) => item.date),
+    axisTick: { show: false },
+    axisLine: { lineStyle: { color: '#e6ded4' } },
+  },
   yAxis: [
-    { type: 'value', name: '笔数' },
-    { type: 'value', name: '金额(元)' },
+    { type: 'value', name: '笔数', nameGap: 12, splitLine: { lineStyle: { color: '#f2ece4' } } },
+    { type: 'value', name: '金额(元)', nameGap: 12, splitLine: { show: false } },
   ],
   series: [
-    { name: '销售笔数', type: 'line', data: trendList.value.map((item) => item.saleCount) },
-    { name: '销售金额', type: 'line', yAxisIndex: 1, data: trendList.value.map((item) => item.saleAmount) },
+    {
+      name: '销售笔数',
+      type: 'line',
+      smooth: true,
+      symbol: 'circle',
+      symbolSize: 7,
+      lineStyle: { width: 3 },
+      areaStyle: { opacity: 0.12 },
+      data: trendList.value.map((item) => item.saleCount),
+    },
+    {
+      name: '销售金额',
+      type: 'line',
+      yAxisIndex: 1,
+      smooth: true,
+      symbol: 'circle',
+      symbolSize: 7,
+      lineStyle: { width: 3 },
+      // 两条面积叠加会发灰，故金额线只保留线条
+      data: trendList.value.map((item) => item.saleAmount),
+    },
   ],
 }))
 
 const reasonOption = computed<EChartsOption>(() => ({
-  title: { text: '出库原因占比', left: 'center' },
+  color: ['#d97706', '#e11d48'],
   tooltip: { trigger: 'item' },
-  legend: { bottom: 0 },
+  legend: { bottom: 0, icon: 'circle' },
   series: [
     {
       name: '出库数量',
       type: 'pie',
-      radius: '55%',
+      radius: ['46%', '68%'],
+      center: ['50%', '45%'],
+      itemStyle: { borderRadius: 8, borderColor: '#fff', borderWidth: 2 },
+      label: { formatter: '{b}\n{d}%' },
       data: reasonList.value.map((item) => ({ name: item.reasonName, value: item.quantity })),
     },
   ],
 }))
 
 const expiryOption = computed<EChartsOption>(() => ({
-  title: { text: '临期分布', left: 'center' },
-  tooltip: {},
-  grid: { left: 60, right: 20, bottom: 30, top: 60 },
-  xAxis: { type: 'category', data: expiryList.value.map((item) => item.typeName) },
-  yAxis: { type: 'value' },
-  series: [{ name: '批次数量', type: 'bar', data: expiryList.value.map((item) => item.count) }],
+  color: ['#d97706'],
+  tooltip: { trigger: 'axis' },
+  grid: { left: 10, right: 16, bottom: 6, top: 24, containLabel: true },
+  xAxis: {
+    type: 'category',
+    data: expiryList.value.map((item) => item.typeName),
+    axisTick: { show: false },
+    axisLine: { lineStyle: { color: '#e6ded4' } },
+  },
+  yAxis: { type: 'value', splitLine: { lineStyle: { color: '#f2ece4' } } },
+  series: [
+    {
+      name: '批次数量',
+      type: 'bar',
+      barWidth: '46%',
+      itemStyle: { borderRadius: [6, 6, 0, 0] },
+      data: expiryList.value.map((item) => item.count),
+    },
+  ],
 }))
 
 // ==================== 明细表格 ====================
@@ -240,39 +314,59 @@ onBeforeUnmount(() => stopAutoRefresh())
       <div class="toolbar-right">
         <span class="label">自动刷新</span>
         <el-switch v-model="autoRefresh" @change="toggleAutoRefresh" />
-        <el-button :loading="loading" @click="loadDashboard">刷新</el-button>
+        <el-button :icon="Refresh" :loading="loading" @click="loadDashboard">刷新</el-button>
       </div>
     </div>
 
     <!-- 异常提示 -->
-    <el-alert v-if="errorMsg" :title="errorMsg" type="error" show-icon class="error-alert" />
+    <el-alert v-if="errorMsg" :title="errorMsg" type="error" show-icon :closable="false" />
 
     <!-- KPI 概览 -->
-    <el-row v-loading="loading" :gutter="12">
+    <el-row v-loading="loading" :gutter="14" class="kpi-row">
       <el-col v-for="item in kpiItems" :key="item.title" :xs="12" :sm="8" :md="6">
-        <el-card class="kpi-card" shadow="hover">
-          <div class="kpi-title">{{ item.title }}</div>
-          <div class="kpi-value" :style="{ color: item.color }">{{ item.isDecimal ? formatNumber(item.value) : item.value }}</div>
+        <el-card class="kpi-card" shadow="never">
+          <div class="kpi-head">
+            <span class="kpi-title">{{ item.title }}</span>
+            <span class="kpi-icon" :style="{ backgroundColor: item.tint, color: item.color }">
+              <el-icon><component :is="item.icon" /></el-icon>
+            </span>
+          </div>
+          <div class="kpi-value" :style="{ color: item.color }">
+            {{ item.isDecimal ? formatNumber(item.value) : item.value }}
+          </div>
         </el-card>
       </el-col>
     </el-row>
 
     <!-- 图表区 -->
-    <el-row :gutter="12" class="chart-row">
-      <el-col :span="24">
-        <el-card shadow="never" class="chart-card">
-          <BaseChart :option="trendOption" class="chart-large" />
-        </el-card>
-      </el-col>
-    </el-row>
-    <el-row :gutter="12" class="chart-row">
+    <el-card shadow="never" class="chart-card">
+      <template #header>
+        <div class="card-head">
+          <span class="card-title">销售趋势</span>
+          <span class="card-hint">近 {{ days }} 天</span>
+        </div>
+      </template>
+      <BaseChart :option="trendOption" class="chart-large" />
+    </el-card>
+
+    <el-row :gutter="14">
       <el-col :xs="24" :md="12">
         <el-card shadow="never" class="chart-card">
+          <template #header>
+            <div class="card-head">
+              <span class="card-title">出库原因占比</span>
+            </div>
+          </template>
           <BaseChart :option="reasonOption" class="chart-medium" />
         </el-card>
       </el-col>
       <el-col :xs="24" :md="12">
         <el-card shadow="never" class="chart-card">
+          <template #header>
+            <div class="card-head">
+              <span class="card-title">临期分布</span>
+            </div>
+          </template>
           <BaseChart :option="expiryOption" class="chart-medium" />
         </el-card>
       </el-col>
@@ -295,9 +389,9 @@ onBeforeUnmount(() => stopAutoRefresh())
               style="width: 260px"
               @change="loadSale"
             />
-            <el-button @click="handleExportSale">导出</el-button>
+            <el-button :icon="Download" @click="handleExportSale">导出</el-button>
           </div>
-          <el-table :data="saleList" border>
+          <el-table :data="saleList" stripe>
             <el-table-column prop="id" label="ID" width="80" sortable />
             <el-table-column prop="productName" label="成品" sortable />
             <el-table-column prop="quantity" label="数量" width="100" sortable />
@@ -338,9 +432,9 @@ onBeforeUnmount(() => stopAutoRefresh())
               style="width: 260px"
               @change="loadOutbound"
             />
-            <el-button @click="handleExportOutbound">导出</el-button>
+            <el-button :icon="Download" @click="handleExportOutbound">导出</el-button>
           </div>
-          <el-table :data="outboundList" border>
+          <el-table :data="outboundList" stripe>
             <el-table-column prop="id" label="ID" width="80" sortable />
             <el-table-column prop="materialName" label="原材料" sortable />
             <el-table-column prop="quantity" label="数量" width="100" sortable />
@@ -370,55 +464,90 @@ onBeforeUnmount(() => stopAutoRefresh())
 .dashboard {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
+/* ---------- 工具栏 ---------- */
 .toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
+  padding: 12px 18px;
+  border-radius: var(--app-radius);
+  background-color: #fff;
+  border: 1px solid var(--app-border);
+  box-shadow: var(--app-shadow);
 }
 
 .toolbar-left,
 .toolbar-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .label {
-  color: #606266;
-  font-size: 14px;
-}
-
-.error-alert {
-  margin-bottom: 4px;
-}
-
-.kpi-card {
-  margin-bottom: 12px;
-  text-align: center;
-}
-
-.kpi-title {
-  color: #909399;
+  color: var(--text-muted);
   font-size: 13px;
 }
 
-.kpi-value {
-  margin-top: 8px;
-  font-size: 24px;
-  font-weight: 600;
+/* ---------- KPI ---------- */
+.kpi-card {
+  margin-bottom: 14px;
 }
 
-.chart-row {
-  margin-bottom: 12px;
+.kpi-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.kpi-title {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.kpi-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 10px;
+  font-size: 17px;
+}
+
+.kpi-value {
+  margin-top: 10px;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+/* ---------- 图表卡片 ---------- */
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+.card-hint {
+  font-size: 12px;
+  color: var(--text-muted);
 }
 
 .chart-card {
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .chart-large {
@@ -429,11 +558,12 @@ onBeforeUnmount(() => stopAutoRefresh())
   height: 280px;
 }
 
+/* ---------- 表格 ---------- */
 .table-toolbar {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: 10px;
+  margin-bottom: 14px;
   flex-wrap: wrap;
 }
 

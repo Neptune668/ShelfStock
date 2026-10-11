@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
+import { Search } from '@element-plus/icons-vue'
 import { pageOutbound } from '@/api/material'
 import { OUTBOUND_REASON_TEXT, type OutboundVO } from '@/api/types'
 
@@ -45,7 +46,7 @@ onMounted(loadList)
 
 <template>
   <div>
-    <el-form inline @submit.prevent>
+    <el-form inline class="filter-bar" @submit.prevent>
       <el-form-item>
         <el-select v-model="query.reason" placeholder="出库原因" clearable style="width: 160px">
           <el-option v-for="item in reasonOptions" :key="item.value" :label="item.label" :value="item.value" />
@@ -61,18 +62,20 @@ onMounted(loadList)
           style="width: 260px"
         />
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="handleSearch">查询</el-button>
+      <el-form-item class="form-actions">
+        <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
       </el-form-item>
     </el-form>
 
-    <el-table v-loading="loading" :data="list" border>
+    <el-table v-loading="loading" :data="list" stripe>
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="materialName" label="原材料" />
       <el-table-column prop="quantity" label="数量" width="100" />
-      <el-table-column label="出库原因" width="130">
+      <el-table-column label="出库原因" width="150">
         <template #default="{ row }">
-          {{ OUTBOUND_REASON_TEXT[row.reason as keyof typeof OUTBOUND_REASON_TEXT] || row.reason }}
+          <el-tag :type="row.reason === 'EXPIRED_DISCARD' ? 'danger' : 'info'" effect="light">
+            {{ OUTBOUND_REASON_TEXT[row.reason as keyof typeof OUTBOUND_REASON_TEXT] || row.reason }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="operator" label="操作人" width="120" />
@@ -93,6 +96,26 @@ onMounted(loadList)
 </template>
 
 <style scoped>
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  background-color: var(--app-panel-bg);
+  border: 1px solid var(--app-border);
+}
+
+.filter-bar :deep(.el-form-item) {
+  margin: 0;
+}
+
+.filter-bar :deep(.form-actions) {
+  margin-left: auto;
+}
+
 .pagination {
   margin-top: 16px;
   justify-content: flex-end;
