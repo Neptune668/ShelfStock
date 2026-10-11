@@ -33,6 +33,13 @@ public final class DateUtil {
         return ChronoUnit.DAYS.between(fromDate, toDate);
     }
 
+    /**
+     * 今天零点
+     */
+    public static Date startOfToday() {
+        return Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+
     private static LocalDate toLocalDate(Date date) {
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
