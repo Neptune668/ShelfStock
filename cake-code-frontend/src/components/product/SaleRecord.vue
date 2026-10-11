@@ -3,6 +3,7 @@ import { onMounted, reactive, ref } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import { pageSale } from '@/api/product'
 import { SALE_TYPE_TEXT, type SaleRecordVO, type SaleType } from '@/api/types'
+import { buildOptions } from '@/utils/options'
 
 const loading = ref(false)
 const list = ref<SaleRecordVO[]>([])
@@ -14,10 +15,7 @@ const query = reactive({
   dateRange: [] as string[],
 })
 
-const saleTypeOptions = (Object.keys(SALE_TYPE_TEXT) as SaleType[]).map((key) => ({
-  value: key,
-  label: SALE_TYPE_TEXT[key],
-}))
+const saleTypeOptions = buildOptions(SALE_TYPE_TEXT)
 
 async function loadList(): Promise<void> {
   loading.value = true
@@ -96,29 +94,4 @@ onMounted(loadList)
   </div>
 </template>
 
-<style scoped>
-.filter-bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  margin-bottom: 16px;
-  border-radius: 12px;
-  background-color: var(--app-panel-bg);
-  border: 1px solid var(--app-border);
-}
 
-.filter-bar :deep(.el-form-item) {
-  margin: 0;
-}
-
-.filter-bar :deep(.form-actions) {
-  margin-left: auto;
-}
-
-.pagination {
-  margin-top: 16px;
-  justify-content: flex-end;
-}
-</style>

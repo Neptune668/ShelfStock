@@ -3,7 +3,7 @@ import { onMounted, reactive, ref } from 'vue'
 import dayjs from 'dayjs'
 import { Download, Search, Upload } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
-import { inbound, outbound, pageMaterial, pageMaterialBatch } from '@/api/material'
+import { inbound, listAllMaterial, outbound, pageMaterialBatch } from '@/api/material'
 import {
   MATERIAL_STATUS_TAG,
   MATERIAL_STATUS_TEXT,
@@ -13,21 +13,15 @@ import {
   type MaterialVO,
   type OutboundReason,
 } from '@/api/types'
+import { buildOptions } from '@/utils/options'
 
 const loading = ref(false)
 const list = ref<MaterialBatchVO[]>([])
 const total = ref(0)
 const query = reactive({ pageNum: 1, pageSize: 10, keyword: '', status: '' })
 
-const statusOptions = (Object.keys(MATERIAL_STATUS_TEXT) as MaterialStatus[]).map((key) => ({
-  value: key,
-  label: MATERIAL_STATUS_TEXT[key],
-}))
-
-const reasonOptions = (Object.keys(OUTBOUND_REASON_TEXT) as OutboundReason[]).map((key) => ({
-  value: key,
-  label: OUTBOUND_REASON_TEXT[key],
-}))
+const statusOptions = buildOptions(MATERIAL_STATUS_TEXT)
+const reasonOptions = buildOptions(OUTBOUND_REASON_TEXT)
 
 // 原材料下拉选项
 const materialOptions = ref<MaterialVO[]>([])
@@ -79,7 +73,7 @@ async function loadList(): Promise<void> {
 }
 
 async function loadMaterialOptions(): Promise<void> {
-  const result = await pageMaterial({ pageNum: 1, pageSize: 1000 })
+  const result = await listAllMaterial()
   materialOptions.value = result.data.list
 }
 
@@ -236,29 +230,4 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped>
-.filter-bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  margin-bottom: 16px;
-  border-radius: 12px;
-  background-color: var(--app-panel-bg);
-  border: 1px solid var(--app-border);
-}
 
-.filter-bar :deep(.el-form-item) {
-  margin: 0;
-}
-
-.filter-bar :deep(.form-actions) {
-  margin-left: auto;
-}
-
-.pagination {
-  margin-top: 16px;
-  justify-content: flex-end;
-}
-</style>

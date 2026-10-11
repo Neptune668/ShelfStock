@@ -1,4 +1,5 @@
 import http from './http'
+import { FULL_LIST_PAGE_SIZE } from '../utils/constants'
 import type {
   OffShelfDTO,
   OnShelfDTO,
@@ -70,4 +71,9 @@ export function pageSale(params: {
   endDate?: string
 }): Promise<Result<PageResult<SaleRecordVO>>> {
   return http.get<Result<PageResult<SaleRecordVO>>>('/sale/page', { params }).then((res) => res.data)
+}
+
+/** 拉取全量成品（用于下拉选择） */
+export function listAllProduct(): Promise<Result<PageResult<ProductVO>>> {
+  return pageProduct({ pageNum: 1, pageSize: FULL_LIST_PAGE_SIZE })
 }

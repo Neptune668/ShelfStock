@@ -3,7 +3,7 @@ import { onMounted, reactive, ref } from 'vue'
 import dayjs from 'dayjs'
 import { Download, Search, Sell, Upload } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
-import { offShelf, onShelf, pageProduct, pageProductBatch, sale } from '@/api/product'
+import { listAllProduct, offShelf, onShelf, pageProductBatch, sale } from '@/api/product'
 import { formatNumber } from '@/utils/format'
 import {
   SALE_TYPE_TEXT,
@@ -14,6 +14,7 @@ import {
   type SaleType,
   type ShelfStatus,
 } from '@/api/types'
+import { buildOptions } from '@/utils/options'
 
 // ==================== 列表 ====================
 const loading = ref(false)
@@ -21,15 +22,8 @@ const list = ref<ProductBatchVO[]>([])
 const total = ref(0)
 const query = reactive({ pageNum: 1, pageSize: 10, productId: undefined as number | undefined, status: '' })
 
-const statusOptions = (Object.keys(SHELF_STATUS_TEXT) as ShelfStatus[]).map((key) => ({
-  value: key,
-  label: SHELF_STATUS_TEXT[key],
-}))
-
-const saleTypeOptions = (Object.keys(SALE_TYPE_TEXT) as SaleType[]).map((key) => ({
-  value: key,
-  label: SALE_TYPE_TEXT[key],
-}))
+const statusOptions = buildOptions(SHELF_STATUS_TEXT)
+const saleTypeOptions = buildOptions(SALE_TYPE_TEXT)
 
 const productOptions = ref<ProductVO[]>([])
 
@@ -50,7 +44,7 @@ async function loadList(): Promise<void> {
 }
 
 async function loadProductOptions(): Promise<void> {
-  const result = await pageProduct({ pageNum: 1, pageSize: 1000 })
+  const result = await listAllProduct()
   productOptions.value = result.data.list
 }
 
@@ -289,29 +283,4 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped>
-.filter-bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  margin-bottom: 16px;
-  border-radius: 12px;
-  background-color: var(--app-panel-bg);
-  border: 1px solid var(--app-border);
-}
 
-.filter-bar :deep(.el-form-item) {
-  margin: 0;
-}
-
-.filter-bar :deep(.form-actions) {
-  margin-left: auto;
-}
-
-.pagination {
-  margin-top: 16px;
-  justify-content: flex-end;
-}
-</style>

@@ -130,3 +130,29 @@ body {
 ::-webkit-scrollbar-track {
   background-color: transparent;
 }
+
+/* ---------- 列表筛选条与分页（多个列表页复用） ---------- */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  background-color: var(--app-panel-bg);
+  border: 1px solid var(--app-border);
+}
+
+.filter-bar .el-form-item {
+  margin: 0;
+}
+
+.filter-bar .form-actions {
+  margin-left: auto;
+}
+
+.pagination {
+  margin-top: 16px;
+  justify-content: flex-end;
+}

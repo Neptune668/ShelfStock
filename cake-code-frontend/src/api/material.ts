@@ -1,4 +1,5 @@
 import http from './http'
+import { FULL_LIST_PAGE_SIZE } from '../utils/constants'
 import type {
   MaterialBatchVO,
   MaterialDTO,
@@ -65,4 +66,9 @@ export function pageOutbound(params: {
   endDate?: string
 }): Promise<Result<PageResult<OutboundVO>>> {
   return http.get<Result<PageResult<OutboundVO>>>('/material/outbound/page', { params }).then((res) => res.data)
+}
+
+/** 拉取全量原材料（用于下拉选择） */
+export function listAllMaterial(): Promise<Result<PageResult<MaterialVO>>> {
+  return pageMaterial({ pageNum: 1, pageSize: FULL_LIST_PAGE_SIZE })
 }

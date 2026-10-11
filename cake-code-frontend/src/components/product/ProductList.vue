@@ -161,33 +161,8 @@ onMounted(loadList)
 </template>
 
 <style scoped>
-.filter-bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  margin-bottom: 16px;
-  border-radius: 12px;
-  background-color: var(--app-panel-bg);
-  border: 1px solid var(--app-border);
-}
-
-.filter-bar :deep(.el-form-item) {
-  margin: 0;
-}
-
-.filter-bar :deep(.form-actions) {
-  margin-left: auto;
-}
-
 .price {
   font-weight: 600;
   color: var(--el-color-primary);
-}
-
-.pagination {
-  margin-top: 16px;
-  justify-content: flex-end;
 }
 </style>

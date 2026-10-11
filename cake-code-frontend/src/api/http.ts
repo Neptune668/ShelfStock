@@ -32,7 +32,9 @@ http.interceptors.response.use(
       // 未登录或 token 过期
       ElMessage.error('未登录或登录已过期，请重新登录')
       localStorage.removeItem('token')
-      window.location.href = '/login'
+      // 带上当前地址，登录后能跳回原页面
+      const redirect = encodeURIComponent(window.location.pathname + window.location.search)
+      window.location.href = `/login?redirect=${redirect}`
     } else if (status === 403) {
       ElMessage.error('无权限访问')
     } else {
