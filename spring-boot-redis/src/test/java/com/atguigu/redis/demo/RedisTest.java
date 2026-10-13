@@ -3,6 +3,7 @@ package com.atguigu.redis.demo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 @SpringBootTest
@@ -18,5 +19,12 @@ class RedisTest {
         // 读
         String v = redis.opsForValue().get("hello:redis");
         System.out.println("value = " + v);
+    }
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
+
+    @Test
+    public void redisTemplatetest01() {
+
     }
 }
