@@ -1,5 +1,6 @@
 package com.atguigu.redis.demo;
 
+import com.atguigu.redis.entity.Student;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +25,17 @@ class RedisTest {
     private RedisTemplate<String, Object> redisTemplate;
 
     @Test
-    public void redisTemplatetest01() {
+    void hashObject() {
+        // 直接存一个 Java 对象（内部转 JSON）
+        Student stu = new Student(255, "Joseph", 243545.323);
+        redisTemplate.opsForValue().set("student:255", stu);
+
+        Object back = redisTemplate.opsForValue().get("student:255");
+        Student stu1 = (Student) back;
+        System.out.println(stu1);//转类型可以操作属性
+//        stu1.getName();
+        System.out.println(back);
+
 
     }
 }
