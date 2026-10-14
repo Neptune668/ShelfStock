@@ -4,3 +4,8 @@ server:
 spring:
   application:
     name: micro-service01-user
+  cloud:
+    nacos:
+      server-addr: 192.168.222.129:8848   # 注册中心地址（客户端通信端口，不是控制台的 8080）
+      discovery:
+        ip: 127.0.0.1
