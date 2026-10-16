@@ -14,3 +14,11 @@ spring:
         ip: 127.0.0.1
       config:
         file-extension: yaml
+    openfeign:
+      client:
+        config:
+          default: # 对所有 FeignClient 生效；也可写服务名
+            connect-timeout: 2000   # 连接超时（毫秒）
+            read-timeout: 3000      # 读取超时（毫秒）
+      httpclient:
+        enabled: true               # 用 Apache HttpClient（比默认更稳）
