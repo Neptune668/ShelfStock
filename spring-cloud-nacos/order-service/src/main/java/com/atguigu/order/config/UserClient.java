@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 // 声明：调用名为 user-service 的服务
-@FeignClient(name = "user-service")
+@FeignClient(name = "user-service", contextId = "user-service-config")
 public interface UserClient {
     // 对应 user-service 的 GET /user/{id}
     @GetMapping("/user/{id}")
