@@ -22,7 +22,6 @@ spring:
             read-timeout: 3000      # 读取超时（毫秒）
       httpclient:
         enabled: true               # 用 Apache HttpClient（比默认更稳）
-      sentinel:
-        enabled: true
-      circuitbreaker:
-        enabled: true
+feign:
+  sentinel:
+    enabled: true               # ← 真正让 Feign 被 Sentinel 包裹的开关
