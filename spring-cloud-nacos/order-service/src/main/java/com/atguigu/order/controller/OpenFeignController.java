@@ -19,4 +19,10 @@ public class OpenFeignController {
         // 像调用本地方法一样调用远程服务，无需手写 HTTP
         return userClient.getUser(id);
     }
+
+    @GetMapping("/order/user/a/{id}")
+    public String getOrderUserA(@PathVariable Long id) {
+        // 通过 Feign 调用 user-service 的 /user/a{id}，返回结果里带 user 实例端口
+        return userClient.getA(id);
+    }
 }

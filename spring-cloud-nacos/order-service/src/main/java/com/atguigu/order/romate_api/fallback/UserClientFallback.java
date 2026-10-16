@@ -12,4 +12,9 @@ public class UserClientFallback implements UserClient {
     public User getUser(Long id) {
         return new User(id, "默认用户", "服务降级中");
     }
+
+    @Override
+    public String getA(Long id) {
+        return "降级：user-service 不可用, id=" + id;
+    }
 }

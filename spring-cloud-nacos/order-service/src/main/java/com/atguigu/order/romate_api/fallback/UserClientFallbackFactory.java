@@ -17,6 +17,12 @@ public class UserClientFallbackFactory implements FallbackFactory<UserClient> {
                 log.error("调用 user-service 失败", cause);
                 return new User(id, "工厂降级", "服务降级：" + cause.getMessage());
             }
+
+            @Override
+            public String getA(Long id) {
+                log.error("调用 user-service /user/a{} 失败", id, cause);
+                return "工厂降级：user-service 不可用, id=" + id;
+            }
         };
     }
 }
