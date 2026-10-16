@@ -20,7 +20,7 @@ public class OrderController {
 
     @GetMapping("/order/{id}")
     public String getUser(@PathVariable Long id) {
-        return "user-" + id + " @ user-service";
+        return "user-" + id + " @ order-service";
     }
 
     @GetMapping("/order/info/{id}")

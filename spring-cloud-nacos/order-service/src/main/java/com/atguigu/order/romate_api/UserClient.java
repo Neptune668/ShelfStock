@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(name = "user-service", contextId = "user-service-romate", fallback = UserClientFallback.class)
 public interface UserClient {
-    @GetMapping("/order/user/{id}")
+    @GetMapping("/user/{id}")
     User getUser(@PathVariable("id") Long id);
 }
