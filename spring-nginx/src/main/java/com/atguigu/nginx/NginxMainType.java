@@ -15,7 +15,7 @@ public class NginxMainType {
     }
     @GetMapping("/test/load/balance")
     public String testLoadBalance(HttpServletRequest request) {
-        return "Current port:" + request.getServerPort();
+        return request.getServerPort() +"Current port:" + request.getLocalPort();
     }
 
 }
